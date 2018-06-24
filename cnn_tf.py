@@ -1,6 +1,8 @@
 import numpy
 import tensorflow as tf
 
+tf.logging.set_verbosity(tf.logging.ERROR)
+
 
 class DenseLayer:
     def __init__(self, input_var, output_size, nonlinearity=None):
@@ -48,17 +50,17 @@ class LeNet5:
         width, height, color_channels = input_size
         with tf.variable_scope('LeNet5', reuse=tf.AUTO_REUSE):
             self.layers = []
-            self.input_var = tf.placeholder(dtype=tf.float32, shape=(None, width, height, color_channels), name='input_var')
+            self.input_var = tf.placeholder(dtype=tf.float32, shape=(None, width, height, color_channels),
+                                            name='input_var')
             self.target_var = tf.placeholder(dtype=tf.float32, shape=(None, self.classes), name='labels_var')
             self.layers.append(ConvPoolLayer(self.input_var, conv_size=5, filters_out=6, pool_size=2,
                                              nonlinearity=tf.nn.tanh))
             self.layers.append(ConvPoolLayer(self.layers[-1].op, conv_size=5, filters_out=16, pool_size=2,
                                              nonlinearity=tf.nn.tanh))
             flattened_input = tf.layers.flatten(self.layers[-1].op)
-            #flattened_input = tf.layers.flatten(self.input_var)
             self.layers.append(DenseLayer(flattened_input, 120, nonlinearity=tf.nn.relu).op)
             self.layers.append(DenseLayer(self.layers[-1], 84, nonlinearity=tf.nn.relu).op)
-            self.layers.append(DenseLayer(self.layers[-1], 2, nonlinearity=tf.nn.relu).op)
+            self.layers.append(DenseLayer(self.layers[-1], 2, nonlinearity=tf.nn.tanh).op)
 
         self.forward_op = self.layers[-1]
 
@@ -68,7 +70,7 @@ class LeNet5:
                 labels=self.target_var
             )
         )
-        self.train_op = tf.train.RMSPropOptimizer(self.learning_rate).minimize(self.cost)
+        self.train_op = tf.train.RMSPropOptimizer(self.learning_rate, decay=0.9999).minimize(self.cost)
         self.session.run(tf.global_variables_initializer())
 
     def fit(self, data, targets):

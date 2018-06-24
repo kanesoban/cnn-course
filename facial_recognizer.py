@@ -4,7 +4,8 @@ import numpy
 from tqdm import tqdm
 import matplotlib.pyplot as plot
 
-from cnn import LeNet5
+import cnn_tf
+import cnn_keras
 
 epochs = 10
 t = 0.8
@@ -20,7 +21,7 @@ train_targets = targets[:int(data.shape[0] * t)]
 test_data = data[int(data.shape[0] * t):]
 test_targets = targets[int(data.shape[0] * t):]
 
-model = LeNet5(input_size=(48, 48, 1), classes=2)
+model = cnn_keras.LeNet5(input_size=(48, 48, 1), classes=2)
 
 losses = []
 prev_loss = numpy.inf
