@@ -60,7 +60,7 @@ class LeNet5:
             flattened_input = tf.layers.flatten(self.layers[-1].op)
             self.layers.append(DenseLayer(flattened_input, 120, nonlinearity=tf.nn.relu))
             self.layers.append(DenseLayer(self.layers[-1].op, 84, nonlinearity=tf.nn.relu))
-            self.layers.append(DenseLayer(self.layers[-1].op, self.classes, nonlinearity=tf.nn.softmax))
+            self.layers.append(DenseLayer(self.layers[-1].op, self.classes, nonlinearity=tf.nn.relu))
 
         self.forward_op = self.layers[-1].op
 

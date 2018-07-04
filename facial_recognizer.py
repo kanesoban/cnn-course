@@ -6,6 +6,7 @@ import matplotlib.pyplot as plot
 
 import cnn_tf
 import cnn_keras
+import regression
 
 epochs = 10
 t = 0.8
@@ -24,12 +25,17 @@ test_targets = targets[int(data.shape[0] * t):]
 
 batch_size = 128
 
-model = cnn_tf.LeNet5(input_size=(28, 28, 1), classes=10)
+#model = cnn_tf.LeNet5(input_size=(28, 28, 1), classes=10)
+model = regression.Regression(28 * 28, classes=10)
 
 losses = []
 accuracies = []
 prev_loss = numpy.inf
 prev_model = model
+loss = model.loss(test_data, test_targets)
+accuracy = model.accuracy(test_data, test_targets)
+losses.append(loss)
+accuracies.append(accuracy)
 for epoch in tqdm(range(epochs), desc='Epoch'):
     model.fit(train_data, train_targets, batch_size=batch_size)
     if epoch % test_frequency == 0:
