@@ -11,6 +11,7 @@ import regression
 epochs = 10
 t = 0.8
 test_frequency = 1
+min_improvement = 0.0001
 
 with h5py.File(sys.argv[1], 'r') as f:
     data = f['data'][()]
@@ -25,8 +26,8 @@ test_targets = targets[int(data.shape[0] * t):]
 
 batch_size = 128
 
-#model = cnn_tf.LeNet5(input_size=(28, 28, 1), classes=10)
-model = regression.Regression(28 * 28, classes=10)
+model = cnn_tf.LeNet5(input_size=(28, 28, 1), classes=10)
+
 
 losses = []
 accuracies = []
@@ -43,7 +44,7 @@ for epoch in tqdm(range(epochs), desc='Epoch'):
         accuracy = model.accuracy(test_data, test_targets)
         losses.append(loss)
         accuracies.append(accuracy)
-        if loss >= prev_loss:
+        if (prev_loss / loss) - 1 < min_improvement:
             break
         prev_loss = loss
 
